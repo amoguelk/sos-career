@@ -1,0 +1,10 @@
+# Zed config
+.ropeproject
+pyrightconfig.json
+
+__pycache__
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
