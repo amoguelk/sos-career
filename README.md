@@ -14,7 +14,7 @@ $ pip install -r requirements.txt
 ## Running the server
 
 ```bash
-$ fastapi dev main.py
+$ fastapi dev app/main.py
 ```
 
 ## Documentation
