@@ -1,7 +1,5 @@
 from fastapi import FastAPI
-
 from app.routers import messages, profiles, users
-
 
 app = FastAPI()
 
