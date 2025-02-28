@@ -40,6 +40,7 @@ class ProfileBase(SQLModel):
     interests: str | None = Field(default=None)
     skills: str | None = Field(default=None)
     education_level: str | None = Field(default=None)
+    goals: str | None = Field(default=None)
 
 
 class Profile(ProfileBase, table=True):
@@ -58,3 +59,4 @@ class ProfileUpdate(SQLModel):
     interests: str | None = None
     skills: str | None = None
     education_level: str | None = None
+    goals: str | None

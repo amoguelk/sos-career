@@ -74,7 +74,7 @@ async def create_user(user: UserCreate, session: SessionDep):
     return db_user
 
 
-@router.get("/me")
+@router.get("/me", response_model=UserPublic)
 async def read_user_me(
     current_user: Annotated[UserPublic, Depends(get_current_active_user)]
 ):

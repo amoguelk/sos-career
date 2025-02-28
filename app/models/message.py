@@ -9,6 +9,8 @@ Database message models
 class MessageBase(SQLModel):
     msg_type: str
     response: str
+    tokens: int
+    prompt: str | None = None
 
 
 class Message(MessageBase, table=True):
