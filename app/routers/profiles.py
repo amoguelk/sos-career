@@ -46,7 +46,7 @@ async def read_profiles(
     return session.exec(select(Profile).offset(offset).limit(limit)).all()
 
 
-@router.get("/me")
+@router.get("/me", response_model=ProfilePublic)
 async def read_profile_me(
     session: SessionDep,
     current_user: Annotated[UserPublic, Depends(get_current_active_user)],
