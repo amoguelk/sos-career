@@ -4,13 +4,13 @@ from fastapi.routing import APIRouter
 import sqlalchemy
 from sqlmodel import select
 from app.dependencies import SessionDep, get_current_active_user
-from app.models.user import (
+from app.models.profile import (
     ProfilePublic,
     ProfileCreate,
     Profile,
     ProfileUpdate,
-    UserPublic,
 )
+from app.models.user import UserPublic
 
 
 router = APIRouter(
@@ -85,7 +85,10 @@ async def update_profile(user_id: int, profile: ProfileUpdate, session: SessionD
     return profile_db
 
 
-@router.delete("/{user_id}")
+@router.delete(
+    "/{user_id}",
+    response_model=ProfilePublic,
+)
 async def delete_profile(user_id: int, session: SessionDep):
     profile = session.get(Profile, user_id)
     if not profile:
@@ -94,4 +97,4 @@ async def delete_profile(user_id: int, session: SessionDep):
         )
     session.delete(profile)
     session.commit()
-    return {"ok": True}
+    return profile

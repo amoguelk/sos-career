@@ -4,7 +4,8 @@ from fastapi.routing import APIRouter
 from sqlmodel import select
 from app.dependencies import SessionDep, get_current_active_user, get_settings
 from app.models.message import Message, MessageCreate, MessagePublic
-from app.models.user import UserPublic, Profile
+from app.models.user import UserPublic
+from app.models.profile import Profile
 from openai import OpenAI
 from app.config import Settings
 
@@ -24,6 +25,7 @@ def get_profile(user_id, session: SessionDep):
             status_code=status.HTTP_404_NOT_FOUND, detail="Profile not created"
         )
     return profile
+
 
 async def generate_message(
     prompt: str,
@@ -133,7 +135,7 @@ async def create_roadmap(
     user_prompt: Annotated[str | None, Body(embed=True)] = None,
 ):
     profile = get_profile(user.id, session)
-    prompt=f"""
+    prompt = f"""
         Based on the following student profile, create a detailed career roadmap that outlines the steps needed to achieve their career goals. The roadmap should include milestones, key skills to develop, potential education or certifications, and specific actions the student should take to move towards their desired career. Be sure to consider the student's interests, skills, and career goals when crafting the roadmap.
 
         Here is the student's profile:
@@ -169,3 +171,31 @@ async def read_profile_me(
     current_user: Annotated[UserPublic, Depends(get_current_active_user)],
 ):
     return session.exec(select(Message).where(Message.user_id == current_user.id)).all()
+
+
+@router.get(
+    "/{message_id}",
+    response_model=MessagePublic,
+)
+async def read_message(message_id: int, session: SessionDep):
+    message = session.get(Message, message_id)
+    if not message:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Message not found"
+        )
+    return message
+
+
+@router.delete(
+    "/{message_id}",
+    response_model=MessagePublic,
+)
+async def delete_message(message_id: int, session: SessionDep):
+    message = session.get(Message, message_id)
+    if not message:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Message not found"
+        )
+    session.delete(message)
+    session.commit()
+    return message

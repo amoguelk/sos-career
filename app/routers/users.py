@@ -125,7 +125,11 @@ async def update_user(user_id: int, user: UserUpdate, session: SessionDep):
     return user_db
 
 
-@router.delete("/{user_id}", dependencies=[Depends(get_current_active_user)])
+@router.delete(
+    "/{user_id}",
+    response_model=UserPublic,
+    dependencies=[Depends(get_current_active_user)],
+)
 async def delete_user(user_id: int, session: SessionDep):
     user = session.get(User, user_id)
     if not user:
@@ -134,4 +138,4 @@ async def delete_user(user_id: int, session: SessionDep):
         )
     session.delete(user)
     session.commit()
-    return {"ok": True}
+    return user
