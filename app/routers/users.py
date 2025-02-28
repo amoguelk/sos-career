@@ -1,67 +1,84 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta, timezone, datetime
 import jwt
 from passlib.context import CryptContext
+from sqlmodel import select
 from typing_extensions import Annotated
-from app.dependencies import get_current_active_user, get_user
-from app.models import User, Token
-
-# ! HIDE IN PROD
-SECRET_KEY = "740cf38d7db3ccd56bb12547460bb0ced2d79e4f03805461eeac4e5db4f09577"
-ALGORITHM = "HS256"
-TOKEN_EXPIRE_MIN = 30
+from app.config import Settings
+from app.dependencies import SessionDep, get_current_active_user, get_settings
+from app.models.user import User, UserCreate, UserPublic, UserUpdate
+from app.schemas.auth import Token
 
 router = APIRouter(prefix="/users", tags=["users"])
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-fake_users_db = {
-    "johndoe@example.com": {
-        "id": 1,
-        "email": "johndoe@example.com",
-        "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
-        "active": True,
-    },
-    "alice@example.com": {
-        "id": 2,
-        "email": "alice@example.com",
-        "hashed_password": "$2b$12$LT6ZXRITqrh/oYk9r.LqXOgJvmp42AfRtYTr28EvoO71f5LN2Bijq",
-        "active": False,
-    },
-}
-
 def get_password_hash(pwd):
     return pwd_context.hash(pwd)
 
-def authenticate_user(fake_db, email: str, password: str):
-    user = get_user(fake_db, email)
+def authenticate_user(email: str, password: str, session: SessionDep):
+    user = session.exec(select(User).where(User.email == email)).first()
     if not user: return False
     if not pwd_context.verify(password, user.hashed_password): return False
     return user
 
-def create_access_token(data: dict, expires_delta: timedelta | None = None):
+def create_access_token(data: dict, secret_key: str, algorithm: str, expires_delta: timedelta | None = None):
     to_encode = data.copy()
     expire = datetime.now(timezone.utc) + (expires_delta if expires_delta else timedelta(minutes=15))
     to_encode.update({"exp": expire})
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return jwt.encode(to_encode, secret_key, algorithm=algorithm)
 
 @router.post("/auth")
-async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
-    user = authenticate_user(fake_users_db, form_data.username, form_data.password)
+async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], session: SessionDep, settings: Annotated[Settings, Depends(get_settings)]):
+    user = authenticate_user(form_data.username, form_data.password, session)
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password", headers={"WWW-Authenticate": "Bearer"})
-    access_token = create_access_token(data={"sub": user.email}, expires_delta=timedelta(TOKEN_EXPIRE_MIN))
+    access_token = create_access_token(data={"sub": user.email}, expires_delta=timedelta(settings.token_expire_min), secret_key=settings.secret_key, algorithm=settings.algorithm)
     return Token(access_token=access_token, token_type="bearer")
 
-# @router.get("/")
-# async def read_users():
-#     return fake_users
+@router.post("/new", response_model=UserPublic)
+async def create_user(user: UserCreate, session: SessionDep):
+    hashed_user = User(email=user.email, full_name=user.full_name, hashed_password=get_password_hash(user.plain_password))
+    db_user = User.model_validate(hashed_user)
+    session.add(db_user)
+    session.commit()
+    session.refresh(db_user)
+    return db_user
 
 @router.get("/me")
-async def read_user_me(current_user: Annotated[User, Depends(get_current_active_user)]):
+async def read_user_me(current_user: Annotated[UserPublic, Depends(get_current_active_user)]):
     return current_user
 
-# @router.get("/{user_id}")
-# async def read_user(user_id: int):
-#     return [user for user in fake_users if user.id == user_id][0]
+@router.get("/", response_model=list[UserPublic], dependencies=[Depends(get_current_active_user)])
+async def read_users(session: SessionDep, offset: int = 0, limit: Annotated[int, Query(le=100)] = 100):
+    return session.exec(select(User).offset(offset).limit(limit)).all()
+
+@router.get("/{user_id}", response_model=UserPublic, dependencies=[Depends(get_current_active_user)])
+async def read_user(user_id: int, session: SessionDep):
+    user = session.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    return user
+
+
+@router.put("/{user_id}", response_model=UserPublic, dependencies=[Depends(get_current_active_user)])
+async def update_user(user_id: int, user: UserUpdate, session: SessionDep):
+    user_db = session.get(User, user_id)
+    if not user_db:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    user_data = user.model_dump(exclude_unset=True)
+    user_db.sqlmodel_update(user_data)
+    session.add(user_db)
+    session.commit()
+    session.refresh(user_db)
+    return user_db
+
+@router.delete("/{user_id}", dependencies=[Depends(get_current_active_user)])
+async def delete_user(user_id: int, session: SessionDep):
+    user = session.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    session.delete(user)
+    session.commit()
+    return {"ok": True}

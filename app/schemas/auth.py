@@ -1,15 +1,8 @@
 from pydantic import BaseModel
 
 '''
-Users and auth
+Pydantic schemas for users and auth
 '''
-class User(BaseModel):
-    id: int
-    email: str
-    active: bool = True
-
-class UserInDB(User):
-    hashed_password: str
 
 class Token(BaseModel):
     access_token: str
