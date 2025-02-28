@@ -9,6 +9,7 @@ app.include_router(users.router)
 app.include_router(profiles.router)
 app.include_router(messages.router)
 
+
 @app.on_event("startup")
 def on_startup():
-    create_db_and_tables();
+    create_db_and_tables()
