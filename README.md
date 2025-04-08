@@ -38,3 +38,21 @@ The automatically created docs can be accessed in the following paths:
 
 1. `/docs`: Swagger docs
 2. `/redoc`: ReDoc docs
+
+## Example client
+
+This project includes an example client server created using `Vue.js`. It can be found under the `client/` directory.
+
+### Setting up the client server
+
+```bash
+cd client
+npm install
+```
+
+### Running the client server
+
+```bash
+cd client
+npm run dev
+```
