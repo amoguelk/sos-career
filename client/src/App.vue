@@ -1,52 +1,17 @@
 <script setup>
-import { RouterLink, RouterView } from "vue-router";
+import { RouterView } from "vue-router";
 </script>
 
 <template>
-  <header>
-    <nav>
-      <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/about">About</RouterLink>
-    </nav>
-  </header>
-
-  <div class="content"><RouterView /></div>
+  <v-app>
+    <v-app-bar :elevation="0" color="secondary">
+      <v-app-bar-title class="text-h5">SOS! Career</v-app-bar-title>
+      <v-btn to="/">Home</v-btn>
+      <v-btn to="/about">About</v-btn>
+      <v-btn to="/login" variant="flat">Log in</v-btn>
+    </v-app-bar>
+    <v-main class="d-flex">
+      <RouterView />
+    </v-main>
+  </v-app>
 </template>
-
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-nav {
-  width: 100%;
-  text-align: center;
-  font-size: 1rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-.content {
-  display: flex;
-  height: 100%;
-  flex-direction: column;
-  justify-content: center;
-}
-</style>
