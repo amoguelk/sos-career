@@ -12,4 +12,8 @@ const login = (data) => {
   });
 };
 
-export { getAllUsers, login };
+const createUser = (data) => {
+  return post("/users/new", data);
+};
+
+export { getAllUsers, login, createUser };

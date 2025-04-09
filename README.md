@@ -50,6 +50,8 @@ cd client
 npm install
 ```
 
+You'll also need to set the `VITE_API_URL` to the URL of your FastAPI server (eg. `localhost:8000`).
+
 ### Running the client server
 
 ```bash

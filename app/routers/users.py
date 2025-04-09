@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta, timezone, datetime
 import jwt
+import sqlalchemy
 from passlib.context import CryptContext
 from sqlmodel import select
 from typing_extensions import Annotated
@@ -63,15 +64,21 @@ async def login(
 
 @router.post("/new", response_model=UserPublic)
 async def create_user(user: UserCreate, session: SessionDep):
-    hashed_user = User(
-        **user.model_dump(),
-        hashed_password=get_password_hash(user.plain_password),
-    )
-    db_user = User.model_validate(hashed_user)
-    session.add(db_user)
-    session.commit()
-    session.refresh(db_user)
-    return db_user
+    try:
+        hashed_user = User(
+            **user.model_dump(),
+            hashed_password=get_password_hash(user.plain_password),
+        )
+        db_user = User.model_validate(hashed_user)
+        session.add(db_user)
+        session.commit()
+        session.refresh(db_user)
+        return db_user
+    except sqlalchemy.exc.IntegrityError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Username already exists"
+        )
+
 
 
 @router.get("/me", response_model=UserPublic)

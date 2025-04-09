@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
 import AboutView from "@/views/AboutView.vue";
 import LoginView from "@/views/authViews/LoginView.vue";
+import SignUpView from "@/views/authViews/SignUpView.vue";
 import LogoutView from "@/views/authViews/LogoutView.vue";
 
 const routes = [
@@ -19,6 +20,12 @@ const routes = [
     path: "/login",
     name: "Login",
     component: LoginView,
+    props: true,
+  },
+  {
+    path: "/signup",
+    name: "SignUp",
+    component: SignUpView,
   },
   {
     path: "/logout",

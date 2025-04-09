@@ -8,9 +8,9 @@ export const useAuthStore = defineStore("auth", () => {
   const isLoggedIn = ref(token.value !== null);
   const router = useRouter();
 
-  const loginAction = async (username, password) => {
+  const loginAction = async (email, password) => {
     const params = new URLSearchParams();
-    params.append("username", username);
+    params.append("username", email);
     params.append("password", password);
     const response = await login(params);
     token.value = response.data.access_token;
@@ -19,14 +19,14 @@ export const useAuthStore = defineStore("auth", () => {
       "access_token",
       JSON.stringify(response.data.access_token),
     );
-    router.push("/");
+    router.push({ name: "Home" });
   };
 
   const logoutAction = async () => {
     token.value = null;
     isLoggedIn.value = null;
     localStorage.removeItem("access_token");
-    router.push("/logout");
+    router.push({ name: "Logout" });
   };
 
   return { token, isLoggedIn, loginAction, logoutAction };

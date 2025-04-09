@@ -14,10 +14,18 @@ const { logoutAction } = authStore;
       <v-app-bar-title class="text-h5">SOS! Career</v-app-bar-title>
       <v-btn to="/">Home</v-btn>
       <v-btn to="/about">About</v-btn>
-      <v-btn @click="logoutAction" variant="flat" v-if="isLoggedIn">
+      <v-btn
+        @click="logoutAction"
+        variant="flat"
+        class="mr-2"
+        v-if="isLoggedIn"
+      >
         Log out
       </v-btn>
-      <v-btn to="/login" variant="flat" v-else>Log in</v-btn>
+      <div v-else>
+        <v-btn to="/login" variant="flat" class="mr-2">Log in</v-btn>
+        <v-btn to="/signup" variant="flat" class="mr-2">Sign up</v-btn>
+      </div>
     </v-app-bar>
     <v-main class="d-flex">
       <RouterView />

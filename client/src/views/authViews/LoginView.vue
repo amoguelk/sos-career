@@ -1,16 +1,19 @@
 <script setup>
 import { useAuthStore } from "@/stores";
 import { ref } from "vue";
+import { useRoute } from "vue-router";
 
-const username = ref("");
+const email = ref("");
 const password = ref("");
 const hasError = ref(false);
+
+const route = useRoute();
 
 const handleLogin = async () => {
   hasError.value = false;
   const store = useAuthStore();
 
-  store.loginAction(username.value, password.value).catch((error) => {
+  store.loginAction(email.value, password.value).catch((error) => {
     console.error("🚩", error);
     if (error.response.status === 401) hasError.value = true;
   });
@@ -21,13 +24,16 @@ const handleLogin = async () => {
   <v-container fluid fill-height class="d-flex align-center justify-center">
     <v-card class="text-center py-8" width="50vw">
       <v-card-text>
+        <v-chip color="success" class="mb-4" v-show="route.query.newUser">
+          Please log in to your brand new account
+        </v-chip>
         <form ref="form" @submit.prevent="handleLogin()">
           <v-text-field
-            v-model="username"
-            name="username"
-            label="Username"
+            v-model="email"
+            name="email"
+            label="Email"
             type="text"
-            placeholder="Username"
+            placeholder="Email"
             required
           ></v-text-field>
 
@@ -44,11 +50,12 @@ const handleLogin = async () => {
               prepend-icon="mdi-alert-circle"
               color="error"
               v-show="hasError"
-              >Incorrect username or password</v-chip
             >
-            <v-btn type="submit" class="mt-4" color="primary" value="log in"
-              >Login</v-btn
-            >
+              Incorrect email or password
+            </v-chip>
+            <v-btn type="submit" class="mt-4" color="primary" value="log in">
+              Login
+            </v-btn>
           </div>
         </form>
       </v-card-text>
