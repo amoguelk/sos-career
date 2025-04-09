@@ -8,4 +8,4 @@ class Settings(BaseSettings):
     sqlite_url: str = f"sqlite:///{sqlite_file_name}"
     openai_api_key: str = "abc123"
 
-    model_config = SettingsConfigDict(env_file=".env.development.local")
+    model_config = SettingsConfigDict(env_file=".env.backend.local")

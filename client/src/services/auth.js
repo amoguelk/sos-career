@@ -12,4 +12,4 @@ const login = (data) => {
   });
 };
 
-export { getAllUsers, login, getTest };
+export { getAllUsers, login };

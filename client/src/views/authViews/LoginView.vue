@@ -1,20 +1,19 @@
 <script setup>
-import { login } from "@/services/auth";
+import { useAuthStore } from "@/stores";
 import { ref } from "vue";
 
 const username = ref("");
 const password = ref("");
+const hasError = ref(false);
 
 const handleLogin = async () => {
-  const params = new URLSearchParams();
-  params.append("username", username.value);
-  params.append("password", password.value);
-  try {
-    const response = await login(params);
-    console.log("🪲 response:", response);
-  } catch (error) {
-    console.error("🚩 ", error);
-  }
+  hasError.value = false;
+  const store = useAuthStore();
+
+  store.loginAction(username.value, password.value).catch((error) => {
+    console.error("🚩", error);
+    if (error.response.status === 401) hasError.value = true;
+  });
 };
 </script>
 
@@ -40,9 +39,17 @@ const handleLogin = async () => {
             placeholder="Password"
             required
           ></v-text-field>
-          <v-btn type="submit" class="mt-4" color="primary" value="log in"
-            >Login</v-btn
-          >
+          <div class="d-flex flex-column align-center">
+            <v-chip
+              prepend-icon="mdi-alert-circle"
+              color="error"
+              v-show="hasError"
+              >Incorrect username or password</v-chip
+            >
+            <v-btn type="submit" class="mt-4" color="primary" value="log in"
+              >Login</v-btn
+            >
+          </div>
         </form>
       </v-card-text>
     </v-card>

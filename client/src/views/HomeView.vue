@@ -10,7 +10,6 @@
         The AI-powered tool that will help you choose your path
       </p>
       <v-btn to="/about" variant="text">Read more about us</v-btn>
-      <v-btn to="/login" variant="text">Log in</v-btn>
     </v-container>
   </v-sheet>
 </template>
