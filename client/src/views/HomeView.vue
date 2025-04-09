@@ -1,6 +1,6 @@
 <template>
   <v-sheet
-    class="align-center align-self-center justify-center text-center mx-auto py-8"
+    class="align-self-center text-center mx-auto py-8"
     elevation="4"
     width="75vw"
   >

@@ -19,8 +19,8 @@ const vuetify = createVuetify({
         colors: {
           primary: baseColor.darken1,
           secondary: baseColor.darken4,
-          background: baseColor.lighten5,
-          surface: baseColor.lighten4,
+          background: colors.shades.white,
+          surface: baseColor.lighten5,
         },
       },
     },
