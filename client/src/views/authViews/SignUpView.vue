@@ -1,5 +1,5 @@
 <script setup>
-import { createUser } from "@/services/auth";
+import { createUser } from "@/services/users";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
@@ -12,7 +12,7 @@ const errorText = ref("");
 
 const router = useRouter();
 
-const handleLogin = async () => {
+const handleSignUp = async () => {
   hasError.value = false;
   if (password.value.length < 8) {
     hasError.value = true;
@@ -48,7 +48,7 @@ const handleLogin = async () => {
   <v-container fluid fill-height class="d-flex align-center justify-center">
     <v-card class="text-center py-8" width="50vw">
       <v-card-text>
-        <form ref="form" @submit.prevent="handleLogin()">
+        <form ref="form" @submit.prevent="handleSignUp()">
           <v-text-field
             v-model="name"
             name="name"

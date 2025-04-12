@@ -51,7 +51,12 @@ async def read_profile_me(
     session: SessionDep,
     current_user: Annotated[UserPublic, Depends(get_current_active_user)],
 ):
-    return session.get(Profile, current_user.id)
+    profile = session.get(Profile, current_user.id)
+    if not profile:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Profile not found"
+        )
+    return profile
 
 
 @router.get(

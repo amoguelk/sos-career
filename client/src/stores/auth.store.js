@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { login } from "@/services/auth";
+import { login } from "@/services/users";
 
 export const useAuthStore = defineStore("auth", () => {
   const token = ref(JSON.parse(localStorage.getItem("access_token")));
@@ -12,13 +12,10 @@ export const useAuthStore = defineStore("auth", () => {
     const params = new URLSearchParams();
     params.append("username", email);
     params.append("password", password);
-    const response = await login(params);
-    token.value = response.data.access_token;
+    const { data } = await login(params);
+    token.value = data.access_token;
     isLoggedIn.value = true;
-    localStorage.setItem(
-      "access_token",
-      JSON.stringify(response.data.access_token),
-    );
+    localStorage.setItem("access_token", JSON.stringify(data.access_token));
     router.push({ name: "Home" });
   };
 
