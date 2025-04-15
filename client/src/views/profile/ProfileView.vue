@@ -49,12 +49,7 @@ onMounted(handleLoad);
 
 <template>
   <v-container fluid fill-height class="d-flex align-center justify-center">
-    <div v-if="!isLoggedIn" class="text-center">
-      <h2 class="text-h2 mb-4">Unauthorized</h2>
-      <p class="text-body mb-4">You can't be here!</p>
-      <v-btn to="/" variant="text">Go back home</v-btn>
-    </div>
-    <v-card v-else class="py-8" width="50vw">
+    <v-card class="py-8" width="50vw">
       <v-skeleton-loader
         v-if="isLoading"
         type="subtitle, paragraph, subtitle, paragraph"

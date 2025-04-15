@@ -2,6 +2,7 @@
 import { RouterView, RouterLink } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/stores";
+import NavButton from "@/components/nav/NavButton.vue";
 
 const authStore = useAuthStore();
 const { isLoggedIn } = storeToRefs(authStore);
@@ -16,17 +17,16 @@ const { logoutAction } = authStore;
           >SOS! Career</RouterLink
         ></v-app-bar-title
       >
-      <v-btn to="/">Home</v-btn>
-      <v-btn to="/about">About</v-btn>
+      <NavButton to="/">Home</NavButton>
+      <!-- <NavButton to="/about">About</NavButton> -->
       <div v-if="isLoggedIn">
-        <v-btn to="/profile">My profile</v-btn>
-        <v-btn @click="logoutAction" variant="flat" class="mr-2">
-          Log out
-        </v-btn>
+        <NavButton to="/profile">My profile</NavButton>
+        <NavButton to="/tool">AI tool</NavButton>
+        <NavButton @click="logoutAction" is-highlighted> Log out </NavButton>
       </div>
       <div v-else>
-        <v-btn to="/login" variant="flat" class="mr-2">Log in</v-btn>
-        <v-btn to="/signup" variant="flat" class="mr-2">Sign up</v-btn>
+        <NavButton to="/login" is-highlighted>Log in</NavButton>
+        <NavButton to="/signup" is-highlighted>Sign up</NavButton>
       </div>
     </v-app-bar>
     <v-main class="d-flex">
