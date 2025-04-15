@@ -1,4 +1,4 @@
-import { get, post } from "@/services/api";
+import { get, post, patch } from "@/services/api";
 
 const baseUrl = "/users";
 
@@ -25,4 +25,8 @@ const createUser = (data) => {
   return post({ endpoint: `${baseUrl}/new`, data, noAuth: true });
 };
 
-export { getAllUsers, getCurrentUser, login, createUser };
+const editUser = (id, data) => {
+  return patch({ endpoint: `${baseUrl}/${id}`, data });
+};
+
+export { getAllUsers, getCurrentUser, login, createUser, editUser };

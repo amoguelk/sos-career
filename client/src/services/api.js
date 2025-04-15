@@ -55,6 +55,20 @@ const put = ({ endpoint, data = {}, extraHeaders = {}, noAuth = false }) => {
 };
 
 /**
+ * Wrapper PATCH method
+ * @param {object} options
+ * @param {string} options.endpoint The endpoint URL
+ * @param {object} [options.data={}] Data to send with the request
+ * @param {object} [options.extraHeaders={}] Extra headers to add to the request
+ * @param {boolean} [options.noAuth=false] Whether the request requires authentication
+ * @return {Promise<AxiosResponse>}
+ */
+const patch = ({ endpoint, data = {}, extraHeaders = {}, noAuth = false }) => {
+  const headers = getAuthHeader(extraHeaders, noAuth);
+  return api.patch(endpoint, data, { headers });
+};
+
+/**
  * Wrapper DELETE method
  * @param {object} options
  * @param {string} options.endpoint The endpoint URL
@@ -68,4 +82,4 @@ const del = ({ endpoint, data = {}, extraHeaders = {}, noAuth = false }) => {
   return api.delete(endpoint, data, { headers });
 };
 
-export { get, post, put, del };
+export { get, post, put, patch, del };
