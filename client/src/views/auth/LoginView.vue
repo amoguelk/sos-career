@@ -1,7 +1,8 @@
 <script setup>
-import { useAuthStore } from "@/stores";
 import { ref } from "vue";
 import { useRoute } from "vue-router";
+import TextInput from "@/components/input/TextInput.vue";
+import { useAuthStore } from "@/stores";
 
 const email = ref("");
 const password = ref("");
@@ -22,29 +23,29 @@ const handleLogin = async () => {
 
 <template>
   <v-container fluid fill-height class="d-flex align-center justify-center">
-    <v-card class="text-center py-8" width="50vw">
+    <v-card class="py-8" width="50vw">
       <v-card-text>
         <v-chip color="success" class="mb-4" v-show="route.query.newUser">
           Please log in to your brand new account
         </v-chip>
         <form ref="form" @submit.prevent="handleLogin()">
-          <v-text-field
+          <TextInput
             v-model="email"
             name="email"
             label="Email"
             type="text"
             placeholder="Email"
             required
-          ></v-text-field>
+          />
 
-          <v-text-field
+          <TextInput
             v-model="password"
             name="password"
             label="Password"
             type="password"
             placeholder="Password"
             required
-          ></v-text-field>
+          />
           <div class="d-flex flex-column align-center">
             <v-chip
               prepend-icon="mdi-alert-circle"

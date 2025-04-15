@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import { editProfile, createProfile } from "@/services/profiles";
+import TextInput from "@/components/input/TextInput.vue";
 
 const props = defineProps({
   interests: String,
@@ -62,28 +63,28 @@ const handleSaveProfile = () => {
       >Save</v-btn
     >
   </div>
-  <v-text-field
+  <TextInput
     name="interests"
     label="Interests"
     type="text"
     v-model="profileRef.interests"
-  ></v-text-field>
-  <v-text-field
+  />
+  <TextInput
     name="skills"
     label="Skills"
     type="text"
     v-model="profileRef.skills"
-  ></v-text-field>
-  <v-text-field
+  />
+  <TextInput
     name="educationLevel"
     label="Education level"
     type="text"
     v-model="profileRef.educationLevel"
-  ></v-text-field>
-  <v-text-field
+  />
+  <TextInput
     name="goals"
     label="Goals"
     type="text"
     v-model="profileRef.goals"
-  ></v-text-field>
+  />
 </template>

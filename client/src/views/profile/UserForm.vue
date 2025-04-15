@@ -1,6 +1,7 @@
 <script setup>
-import { editUser } from "@/services/users";
 import { ref, computed } from "vue";
+import TextInput from "@/components/input/TextInput.vue";
+import { editUser } from "@/services/users";
 
 const props = defineProps({
   fullName: String,
@@ -54,19 +55,19 @@ const handleSaveUser = () => {
       >Save</v-btn
     >
   </div>
-  <v-text-field
+  <TextInput
     name="name"
     label="Name"
     type="text"
     required
     v-model="userRef.fullName"
-  ></v-text-field>
-  <v-text-field
+  />
+  <TextInput
     name="email"
     label="Email"
     type="email"
     v-model="userRef.email"
     required
     disabled
-  ></v-text-field>
+  />
 </template>

@@ -1,7 +1,8 @@
 <script setup>
-import { createUser } from "@/services/users";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import TextInput from "@/components/input/TextInput.vue";
+import { createUser } from "@/services/users";
 
 const name = ref("");
 const email = ref("");
@@ -46,42 +47,43 @@ const handleSignUp = async () => {
 
 <template>
   <v-container fluid fill-height class="d-flex align-center justify-center">
-    <v-card class="text-center py-8" width="50vw">
+    <v-card class="py-8" width="50vw">
       <v-card-text>
         <form ref="form" @submit.prevent="handleSignUp()">
-          <v-text-field
+          <TextInput
             v-model="name"
             name="name"
             label="Your name"
             type="text"
             placeholder="John Doe"
             required
-          ></v-text-field>
+          />
 
-          <v-text-field
+          <TextInput
             v-model="email"
             name="email"
             label="Email"
             type="email"
             placeholder="jdoe@email.com"
             required
-          ></v-text-field>
+          />
 
-          <v-text-field
+          <TextInput
             v-model="password"
             name="password"
             label="Password"
             type="password"
             required
-          ></v-text-field>
+            min="8"
+          />
 
-          <v-text-field
+          <TextInput
             v-model="passwordVerify"
             name="passwordVerify"
             label="Verify password"
             type="password"
             required
-          ></v-text-field>
+          />
           <div class="d-flex flex-column align-center">
             <v-chip
               prepend-icon="mdi-alert-circle"
